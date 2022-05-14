@@ -1,17 +1,11 @@
-# Template: worker-typescript
+# Homura
 
-A batteries included template for kick starting a TypeScript Cloudflare worker project.
+My personal Discord bot running on Cloudflare Workers
 
-## Setup
+## Features
 
-To create a `my-project` directory using this template, run:
+- Notify YouTube channel updates after applying a custom filter (WIP).
 
-```sh
-$ npm init cloudflare my-project worker-typescript
-# or
-$ yarn create cloudflare my-project worker-typescript
-# or
-$ pnpm create cloudflare my-project worker-typescript
-```
+## Behind the name
 
-> **Note:** Each command invokes [`create-cloudflare`](https://www.npmjs.com/package/create-cloudflare) for project creation.
+This bot is named after Akemi Homura, a character in Puella Magi Madoka Magica, and homura means _flare_ in Japanese!
