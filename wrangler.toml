@@ -1,3 +1,6 @@
-name = "" # todo
+name = "homura"
 workers_dev = true
 compatibility_date = "2022-05-03"
+# account ID is not a secret.
+# ref. https://github.com/cloudflare/wrangler/issues/209#issuecomment-541654484
+account_id = "700a18fef919b47f825bd3791395d870"
