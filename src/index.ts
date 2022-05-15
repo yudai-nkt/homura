@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { timingSafeEqual } from "./utils";
-import { NUCLEAR_BLAST_RECORDS } from "./youtubeChannelIds";
+import { youtubeChannels } from "./youtubeChannels";
 
 const getChannelFeed = (id: string) =>
   `https://www.youtube.com/xml/feeds/videos.xml?channel_id=${id}`;
@@ -31,7 +31,11 @@ app
     const searchParams = new URL(c.req.url).searchParams;
     const topic = searchParams.get("hub.topic");
     const challenge = searchParams.get("hub.challenge");
-    if (topic === getChannelFeed(NUCLEAR_BLAST_RECORDS) && challenge !== null) {
+    if (
+      topic !== null &&
+      youtubeChannels.map(({ id }) => getChannelFeed(id)).includes(topic) &&
+      challenge !== null
+    ) {
       return c.text(challenge, 200);
     } else {
       return c.text("Does not agree with the requested action.", 404);
