@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { timingSafeEqual } from "./utils";
+import { computeHexSignature, timingSafeEqual } from "./utils";
 import { youtubeChannels } from "./youtubeChannels";
 
 const getChannelFeed = (id: string) =>
@@ -56,23 +56,12 @@ app
       return c.text("Invalid request", 400);
     }
 
+    const xml = await c.req.text();
+    const signature = await computeHexSignature(xml, c.env.YOUTUBE_HMAC_SECRET);
     const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-      "raw",
-      encoder.encode(c.env.YOUTUBE_HMAC_SECRET),
-      { name: "HMAC", hash: "SHA-1" },
-      true,
-      ["sign", "verify"]
-    );
-    const computed = await crypto.subtle.sign(
-      "HMAC",
-      key,
-      encoder.encode(await c.req.text())
-    );
-    const hex = [...new Uint8Array(computed)]
-      .map((x) => x.toString(16).padStart(2, "0"))
-      .join("");
-    if (timingSafeEqual(encoder.encode(xHubSignature), encoder.encode(hex))) {
+    if (
+      timingSafeEqual(encoder.encode(xHubSignature), encoder.encode(signature))
+    ) {
       // TODO: parse body and send a message.
       console.info("Signature verified.");
     } else {
