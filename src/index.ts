@@ -1,4 +1,7 @@
 import { Hono } from "hono";
+//@ts-expect-error
+import { parse } from "txml/txml";
+import { sendMessage } from "./discord";
 import { computeHexSignature, timingSafeEqual } from "./utils";
 import { youtubeChannels } from "./youtubeChannels";
 
@@ -8,6 +11,8 @@ const getChannelFeed = (id: string) =>
 type Env = {
   YOUTUBE_ENDPOINT_SLUG: string;
   YOUTUBE_HMAC_SECRET: string;
+  DISCORD_BOT_TOKEN: string;
+  DISCORD_YOUTUBE_CHANNEL_ID: string;
 };
 const app = new Hono<Env>();
 
@@ -62,8 +67,18 @@ app
     if (
       timingSafeEqual(encoder.encode(xHubSignature), encoder.encode(signature))
     ) {
-      // TODO: parse body and send a message.
       console.info("Signature verified.");
+      const { entry } = parse(xml, { simplify: true })?.feed ?? {};
+      const videoId = entry?.["yt:videoId"];
+      const videoTitle = entry?.title;
+      const channelName = entry?.author?.name;
+      await sendMessage(
+        `${channelName} has uploaded a new video "${videoTitle}": https://www.youtube.com/watch?v=${videoId}`,
+        {
+          token: c.env.DISCORD_BOT_TOKEN,
+          channelId: c.env.DISCORD_YOUTUBE_CHANNEL_ID,
+        }
+      );
     } else {
       console.info("Signature verification failed.");
     }

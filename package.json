@@ -15,6 +15,7 @@
     "wrangler": "^2.0.0"
   },
   "dependencies": {
-    "hono": "^1.1.1"
+    "hono": "^1.1.1",
+    "txml": "^5.1.1"
   }
 }
