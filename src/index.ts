@@ -69,9 +69,10 @@ app
       key,
       encoder.encode(await c.req.text())
     );
-    if (
-      timingSafeEqual(encoder.encode(xHubSignature), new Uint8Array(computed))
-    ) {
+    const hex = [...new Uint8Array(computed)]
+      .map((x) => x.toString(16).padStart(2, "0"))
+      .join("");
+    if (timingSafeEqual(encoder.encode(xHubSignature), encoder.encode(hex))) {
       // TODO: parse body and send a message.
       console.info("Signature verified.");
     } else {
